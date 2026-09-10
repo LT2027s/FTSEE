@@ -1,0 +1,58 @@
+<script type="module">
+  import { getTeamStats } from './ftcscout.js';
+  import { getTeamBasics } from './ftcscout.js';
+
+  //Waits until button gets clicked then 
+document.getElementById('lookupBtn').addEventListener('click', async () => { 
+  //Records inputed team number
+  const number = document.getElementById('teamNumberInput').value; 
+
+const quickStats = await getTeamStats(Number(number), 2025); //Checks teams current seasons rankings
+const basicStats = await getTeamBasics(Number(number)); //Team name and location
+
+
+//Fail safe if team doesnt exist
+if (!basicStats) {
+  document.getElementById('teamBasics').innerHTML = `<p>This team doesnt exist.</p>`;
+  return;
+}
+
+//Fail safe if team didnt participate this season
+if (!quickStats) {
+  document.getElementById('teamInfo').innerHTML = `<p>No stats found for this team/season.</p>`;
+  return;
+}
+
+
+
+//Imports values in a template and put it in box with id=teamInfo
+document.getElementById('teamBasics').innerHTML = `
+<div>
+  <h2>${basicStats.name} (Team ${basicStats.number}) (Location ${basicStats.location.country})</h2> 
+</div>`;
+
+
+
+//Imports values in a template and put it in box with id=teamInfo
+document.getElementById('teamInfo').innerHTML = `
+<div>
+  <p>Total OPR: ${Math.round(quickStats.tot.value)} (Rank ${quickStats.tot.rank})</p> 
+  <p>Auto OPR: ${Math.round(quickStats.auto.value)} (Rank ${quickStats.auto.rank})</p> 
+  <p>TeleOp OPR: ${Math.round(quickStats.dc.value)} (Rank ${quickStats.dc.rank})</p> 
+  <p>Endgame OPR: ${Math.round(quickStats.eg.value)} (Rank ${quickStats.eg.rank})</p>
+</div>`;
+
+}); 
+
+</script>
+<!-- Searchbars and such horizontally -->
+<div style="display: flex; gap: 20px;">
+
+  <div>
+    <div id="teamBasics"></div>
+    <div id="teamInfo"></div>
+    <input type="number" id="teamNumberInput" placeholder="Enter team number">
+    <button id="lookupBtn">Look Up Team</button>
+  </div>
+
+</div>

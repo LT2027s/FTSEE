@@ -1,0 +1,89 @@
+<script type="module">
+  import { db } from "./firebase.js";
+  import { collection, addDoc } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+
+  const form = document.getElementById("scoutingForm");
+
+  form.addEventListener("submit", async function(e) {
+    e.preventDefault(); // stops the page from refreshing
+
+    // collect all the values from the form
+    const entry = {
+      teamNumber: document.getElementById("teamNumber").value,
+      teamName:   document.getElementById("teamName").value,
+      autoType:   document.getElementById("autoType").value,
+      autoBalls:  document.getElementById("avgAutoBalls").value,
+      teleOpPosition:  document.getElementById("teleOpPosition").value,
+      teleopBalls: document.getElementById("avgTeleOpBalls").value,
+      endgamePosition: document.getElementById("endgamePosition").value,
+      extraComments:   document.getElementById("extraComments").value,
+      timestamp:  new Date()
+    };
+
+    // save it to Firebase
+    try {
+      await addDoc(collection(db, "scoutingEntries"), entry);
+      alert("Entry saved!");
+      form.reset();
+    } catch (error) {
+      alert("Error saving: " + error.message);
+    }
+  });
+</script>
+<form id = "scoutingForm">
+
+<!-- Team number question -->
+ <label>Team Number *</label>
+ <input type="number" id="teamNumber" required>
+
+
+<!-- Team name question -->
+ <label>Team Name</label>
+  <input type="text" id="teamName" optional>
+
+
+<!-- Autonomous position -->
+  <label> Autonomous</label>
+<select id="autoType">
+    <option value = "none"> No auto</option>
+    <option value = "Close"> Close</option>
+    <option value = "Far"> Far</option>
+    <option value = "Both"> Both</option>
+</select>
+
+
+<!-- Auto balls -->
+ <label> Average balls in auto</label>
+ <input type = "number" id = "avgAutoBalls">
+
+
+<!--TeleOp position -->
+  <label> Teleop </label>
+<select id="teleOpPosition">
+    <option value = "Close"> Close</option>
+    <option value = "Far"> Far</option>
+    <option value = "Both"> Both</option>
+</select>
+
+ <!-- TeleOp balls -->
+ <label> Average balls in TeleOp</label>
+ <input type = "number" id = "avgTeleOpBalls">
+
+ <!-- Endgame position -->
+  <label> Endgame </label>
+<select id="endgamePosition">
+    <option value = "Full Park"> Full Park</option>
+    <option value = "Half Park"> Half Park</option>
+    <option value = "Lift"> Lift</option>
+</select>
+
+ <!-- Extra comments -->
+ <label> Extra Comments</label>
+ <textarea id ="extraComments"></textarea>
+
+
+ <button type="submit">Submit</button>
+
+</form>
+
+
