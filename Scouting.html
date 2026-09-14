@@ -30,19 +30,47 @@
     }
   });
 </script>
-<form id = "scoutingForm">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scouting</title>
+    <link rel="stylesheet" href="style.css">
+</head>
 
-<!-- Team number question -->
+<body>
+    <header>
+        <nav>
+            <ul>
+                <img src="Images/NBGFTSEE.png" alt="Logo" style="width:10%;">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="Scouting.html">Scouting Form</a></li>
+                <li><a href="Analysis.html">Analysis</a></li>
+                <li><a href="https://www.firstinspires.org/programs/ftc/" target="_blank">Visit Official FTC Website</a></li> 
+                <li><a href="https://ftcscout.org/teams" target="_blank">Visit FTCScout</a></li>
+            </ul>
+        </nav>
+    </header>
+</body>
+
+<form id = "scoutingForm" >
+
+
+<!-- Team number -->
+<p>
  <label>Team Number *</label>
  <input type="number" id="teamNumber" required>
+</p>
 
 
-<!-- Team name question -->
+<!-- Team name -->
+<p>
  <label>Team Name</label>
   <input type="text" id="teamName" optional>
+</p>
 
 
 <!-- Autonomous position -->
+<p>
   <label> Autonomous</label>
 <select id="autoType">
     <option value = "none"> No auto</option>
@@ -50,39 +78,55 @@
     <option value = "Far"> Far</option>
     <option value = "Both"> Both</option>
 </select>
+</p>
 
 
 <!-- Auto balls -->
+<p>
  <label> Average balls in auto</label>
  <input type = "number" id = "avgAutoBalls">
+</p>
 
 
 <!--TeleOp position -->
+<p>
   <label> Teleop </label>
 <select id="teleOpPosition">
     <option value = "Close"> Close</option>
     <option value = "Far"> Far</option>
     <option value = "Both"> Both</option>
 </select>
+</p>
 
- <!-- TeleOp balls -->
+
+<!-- TeleOp balls -->
+<p>
  <label> Average balls in TeleOp</label>
  <input type = "number" id = "avgTeleOpBalls">
+</p>
 
- <!-- Endgame position -->
+
+<!-- Endgame position -->
+<p>
   <label> Endgame </label>
 <select id="endgamePosition">
     <option value = "Full Park"> Full Park</option>
     <option value = "Half Park"> Half Park</option>
     <option value = "Lift"> Lift</option>
 </select>
+</p>
 
- <!-- Extra comments -->
+
+<!-- Extra comments -->
+<p>
  <label> Extra Comments</label>
  <textarea id ="extraComments"></textarea>
+</p>
 
-
+<!-- Submit Button -->
+<p>
  <button type="submit">Submit</button>
+</p>
 
 </form>
 
