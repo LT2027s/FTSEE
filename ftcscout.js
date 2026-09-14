@@ -43,5 +43,5 @@ export async function getTeamStats(teamNumber, season) {
   });
 
   const result = await response.json();
-  return result.data.teamByNumber;
+  return result.data.teamByNumber.quickStats;
 }
