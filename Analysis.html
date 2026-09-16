@@ -1,6 +1,12 @@
 <script type="module">
   import { getTeamStats } from './ftcscout.js';
   import { getTeamBasics } from './ftcscout.js';
+  import { db, collection, query, where, getDocs } from './firebase.js';
+
+  
+
+
+
 
   //Waits until button gets clicked then 
 document.getElementById('lookupBtn').addEventListener('click', async () => { 
@@ -9,7 +15,20 @@ document.getElementById('lookupBtn').addEventListener('click', async () => {
 
 const QS = await getTeamStats(Number(number), 2025); //Checks teams current seasons rankings
 const BS = await getTeamBasics(Number(number)); //Team name and location
-
+const fireQ = query(collection(db, "scoutingEntries"), where("teamNumber", "==", number));
+const wait = await getDocs(fireQ);
+let amount = 1
+let html = "";
+wait.forEach((doc) => {
+  const scout = doc.data();
+  html += `<b>Scouting form: ${amount}</b>
+  <p>${scout.teamName}</p>
+  <p>Auto: ${scout.autoType}</p>
+  <p>TeleOp: ${scout.teleOpPosition}</p>
+  <p>Endgame: ${scout.endgamePosition}</p>`;
+  amount+=1;
+});
+document.getElementById('scouting').innerHTML = html || "<p>No scouting entries yet.</p>";
 
 //Fail safe if team doesnt exist (stats also dont exist)
 if (!BS) {
@@ -42,6 +61,8 @@ document.getElementById('teamInfo').innerHTML = `
   <p>Endgame OPR: ${Math.round(QS.eg.value)} (Rank ${QS.eg.rank})</p>
 </div>`;
 
+
+
 }); 
 
 
@@ -54,6 +75,21 @@ document.getElementById('lookupBtn2').addEventListener('click', async () => {
 const QS = await getTeamStats(Number(number), 2025); //Checks teams current seasons rankings
 const BS = await getTeamBasics(Number(number)); //Team name and location
 
+
+const fireQ = query(collection(db, "scoutingEntries"), where("teamNumber", "==", number));
+const wait = await getDocs(fireQ);
+let amount = 1
+let html = "";
+wait.forEach((doc) => {
+  const scout = doc.data();
+  html += `<b>Scouting form: ${amount}</b>
+  <p>${scout.teamName}</p>
+  <p>Auto: ${scout.autoType}</p>
+  <p>TeleOp: ${scout.teleOpPosition}</p>
+  <p>Endgame: ${scout.endgamePosition}</p>`;
+  amount+=1;
+});
+document.getElementById('scouting2').innerHTML = html || "<p>No scouting entries yet.</p>";
 
 //Fail safe if team doesnt exist
 if (!BS) {
@@ -87,8 +123,6 @@ document.getElementById('teamInfo2').innerHTML = `
 </div>`;
 
 }); 
-
-
 </script>
 
 <style>
@@ -126,6 +160,7 @@ document.getElementById('teamInfo2').innerHTML = `
   <div>
     <div id="teamBasics"></div>
     <div id="teamInfo"></div>
+    <div id="scouting"></div>
     <input type="number" id="teamNumberInput" placeholder="Enter team number">
     <button id="lookupBtn">Look Up Team</button>
   </div>
@@ -133,6 +168,7 @@ document.getElementById('teamInfo2').innerHTML = `
   <div>
     <div id="teamBasics2"></div>
     <div id="teamInfo2"></div>
+    <div id="scouting2"></div>
     <input type="number" id="teamNumberInput2" placeholder="Enter team number">
     <button id="lookupBtn2">Look Up Team</button>
   </div>
