@@ -11,7 +11,7 @@ const QS = await getTeamStats(Number(number), 2026); //Checks teams current seas
 const BS = await getTeamBasics(Number(number)); //Team name and location
 
 
-//Fail safe if team doesnt exist
+//Fail safe if team doesnt exist (stats also dont exist)
 if (!BS) {
   document.getElementById('teamBasics').innerHTML = `<p>This team doesnt exist.</p>`;
   document.getElementById('teamInfo').innerHTML = `<p>No stats found for this team/season.</p>`;
@@ -26,8 +26,7 @@ document.getElementById('teamBasics').innerHTML = `
 </div>`;
 
 
-
-//Fail safe if team didnt participate this season
+//Fail safe if team didnt participate this season (the order lets the team basics to still be there)
 if (!QS) {
   document.getElementById('teamInfo').innerHTML = `<p>No stats found for this team/season.</p>`;
   return;
@@ -59,15 +58,9 @@ const BS = await getTeamBasics(Number(number)); //Team name and location
 //Fail safe if team doesnt exist
 if (!BS) {
   document.getElementById('teamBasics2').innerHTML = `<p>This team doesnt exist.</p>`;
-  return;
-}
-
-//Fail safe if team didnt participate this season
-if (!QS) {
   document.getElementById('teamInfo2').innerHTML = `<p>No stats found for this team/season.</p>`;
   return;
 }
-
 
 
 //Imports values in a template and put it in box with id=teamInfo
@@ -76,6 +69,12 @@ document.getElementById('teamBasics2').innerHTML = `
   <h2>${BS.name} (Team ${BS.number}) (Location ${BS.location.country})</h2> 
 </div>`;
 
+
+//Fail safe if team didnt participate this season
+if (!QS) {
+  document.getElementById('teamInfo2').innerHTML = `<p>No stats found for this team/season.</p>`;
+  return;
+}
 
 
 //Imports values in a template and put it in box with id=teamInfo
