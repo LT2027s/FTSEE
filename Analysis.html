@@ -7,21 +7,16 @@ document.getElementById('lookupBtn').addEventListener('click', async () => {
   //Records inputed team number
   const number = document.getElementById('teamNumberInput').value; 
 
-const QS = await getTeamStats(Number(number), 2025); //Checks teams current seasons rankings
+const QS = await getTeamStats(Number(number), 2026); //Checks teams current seasons rankings
 const BS = await getTeamBasics(Number(number)); //Team name and location
+
 
 //Fail safe if team doesnt exist
 if (!BS) {
   document.getElementById('teamBasics').innerHTML = `<p>This team doesnt exist.</p>`;
-  return;
-}
-
-//Fail safe if team didnt participate this season
-if (!QS) {
   document.getElementById('teamInfo').innerHTML = `<p>No stats found for this team/season.</p>`;
   return;
 }
-
 
 
 //Imports values in a template and put it in box with id=teamInfo
@@ -30,6 +25,13 @@ document.getElementById('teamBasics').innerHTML = `
   <h2>${BS.name} (Team ${BS.number}) (Location ${BS.location.country})</h2> 
 </div>`;
 
+
+
+//Fail safe if team didnt participate this season
+if (!QS) {
+  document.getElementById('teamInfo').innerHTML = `<p>No stats found for this team/season.</p>`;
+  return;
+}
 
 
 //Imports values in a template and put it in box with id=teamInfo
