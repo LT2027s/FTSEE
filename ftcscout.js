@@ -19,7 +19,7 @@ export async function getTeamBasics(teamNumber) {
   });
 
   const result = await response.json();
-  return result.data.teamByNumber;
+  return result.data?.teamByNumber?? null;
 }
 export async function getTeamStats(teamNumber, season) {
   const response = await fetch('https://api.ftcscout.org/graphql', {
@@ -43,5 +43,5 @@ export async function getTeamStats(teamNumber, season) {
   });
 
   const result = await response.json();
-  return result.data.teamByNumber.quickStats;
+  return result.data?.teamByNumber?.quickStats?? null;
 }
