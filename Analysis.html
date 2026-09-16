@@ -7,7 +7,7 @@ document.getElementById('lookupBtn').addEventListener('click', async () => {
   //Records inputed team number
   const number = document.getElementById('teamNumberInput').value; 
 
-const QS = await getTeamStats(Number(number), 2026); //Checks teams current seasons rankings
+const QS = await getTeamStats(Number(number), 2025); //Checks teams current seasons rankings
 const BS = await getTeamBasics(Number(number)); //Team name and location
 
 
