@@ -1,7 +1,7 @@
 <script type="module">
   import { getTeamStats } from './ftcscout.js';
   import { getTeamBasics } from './ftcscout.js';
-  import { db, collection, query, where, getDocs } from './firebase.js';
+  import { db, collection, query, where, getDocs, doc, deleteDoc } from './firebase.js';
 
   
 
@@ -29,11 +29,19 @@ wait.forEach((doc) => {
      <summary>Comments</summary>
       <p>${scout.extraComments}</p>
     </details>
-</details>`
+</details>
+<button class="deleteBtn" data-id="${doc.id}">Delete</button>`
 ;  
   amount+=1;
 });
 document.getElementById('scouting').innerHTML = html || "<p>No scouting entries yet.</p>";
+document.querySelectorAll('.deleteBtn').forEach((btn) => {
+  btn.addEventListener('click', async () => {
+    await deleteDoc(doc(db, "scoutingEntries", btn.dataset.id)); //waits for code to be deleted on the database
+    btn.closest('b, p, button')?.remove(); // deletes the delete button
+    document.getElementById('lookupBtn').click(); // Runs look up button (essentially reloading)
+  });
+});
 
 //Fail safe if team doesnt exist (stats also dont exist)
 if (!BS) {
@@ -89,7 +97,7 @@ wait.forEach((doc) => {
   const scout = doc.data();
   html += `
 <details>
- <summary> <b>Scouting form: ${amount}</b> </summary>
+ <summary> <b>Scouting form: ${amount}</b> </summary> 
     <p>${scout.teamName}</p>
     <p>Auto: ${scout.autoType}</p>
     <p>TeleOp: ${scout.teleOpPosition}</p>
@@ -98,12 +106,19 @@ wait.forEach((doc) => {
      <summary>Comments</summary>
       <p>${scout.extraComments}</p>
     </details>
-</details>`
+</details> 
+<button class="deleteBtn" data-id="${doc.id}">Delete</button>`
 ;  
   amount+=1;
 });
 document.getElementById('scouting2').innerHTML = html || "<p>No scouting entries yet.</p>";
-
+document.querySelectorAll('.deleteBtn').forEach((btn) => {
+  btn.addEventListener('click', async () => {
+    await deleteDoc(doc(db, "scoutingEntries", btn.dataset.id));
+    btn.closest('b, p, button')?.remove(); // makes the button dissapear on click
+    document.getElementById('lookupBtn2').click(); // runs look up btn
+  });
+});
 //Fail safe if team doesnt exist
 if (!BS) {
   document.getElementById('teamBasics2').innerHTML = `<p>This team doesnt exist.</p>`;
