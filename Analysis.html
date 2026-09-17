@@ -18,12 +18,19 @@ let amount = 1
 let html = "";
 wait.forEach((doc) => {
   const scout = doc.data();
-  html += `<b>Scouting form: ${amount}</b>
-  <p>${scout.teamName}</p>
-  <p>Auto: ${scout.autoType}</p>
-  <p>TeleOp: ${scout.teleOpPosition}</p>
-  <p>Endgame: ${scout.endgamePosition}</p>
-  <p>Comments: ${scout.extraComments}</p>`;
+  html += `
+<details>
+ <summary> <b>Scouting form: ${amount}</b> </summary>
+    <p>${scout.teamName}</p>
+    <p>Auto: ${scout.autoType}</p>
+    <p>TeleOp: ${scout.teleOpPosition}</p>
+    <p>Endgame: ${scout.endgamePosition}</p>
+    <details>
+     <summary>Comments</summary>
+      <p>${scout.extraComments}</p>
+    </details>
+</details>`
+;  
   amount+=1;
 });
 document.getElementById('scouting').innerHTML = html || "<p>No scouting entries yet.</p>";
@@ -80,12 +87,19 @@ let amount = 1
 let html = "";
 wait.forEach((doc) => {
   const scout = doc.data();
-  html += `<b>Scouting form: ${amount}</b>
-  <p>${scout.teamName}</p>
-  <p>Auto: ${scout.autoType}</p>
-  <p>TeleOp: ${scout.teleOpPosition}</p>
-  <p>Endgame: ${scout.endgamePosition}</p>
-  <p>Comments: ${scout.extraComments}</p>`;
+  html += `
+<details>
+ <summary> <b>Scouting form: ${amount}</b> </summary>
+    <p>${scout.teamName}</p>
+    <p>Auto: ${scout.autoType}</p>
+    <p>TeleOp: ${scout.teleOpPosition}</p>
+    <p>Endgame: ${scout.endgamePosition}</p>
+    <details>
+     <summary>Comments</summary>
+      <p>${scout.extraComments}</p>
+    </details>
+</details>`
+;  
   amount+=1;
 });
 document.getElementById('scouting2').innerHTML = html || "<p>No scouting entries yet.</p>";
