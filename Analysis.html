@@ -86,7 +86,8 @@ wait.forEach((doc) => {
   <p>${scout.teamName}</p>
   <p>Auto: ${scout.autoType}</p>
   <p>TeleOp: ${scout.teleOpPosition}</p>
-  <p>Endgame: ${scout.endgamePosition}</p>`;
+  <p>Endgame: ${scout.endgamePosition}</p>
+  <p>Comments: ${scout.extraComments}</p>`;
   amount+=1;
 });
 document.getElementById('scouting2').innerHTML = html || "<p>No scouting entries yet.</p>";
