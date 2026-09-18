@@ -1,3 +1,4 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.1/chart.min.js" integrity="sha512-mOiNIzRB+4/INX75lwv3+eSG+Sih4wQy+qS/+0mHkk2MjHZW6ABGN6eQD1MoV5Tv9KG+G3UAMy1vW3fk5goVXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script type="module">
   import { getTeamStats } from './ftcscout.js';
   import { getTeamBasics } from './ftcscout.js';
@@ -27,7 +28,7 @@ wait.forEach((doc) => {
     <p>Endgame: ${scout.endgamePosition}</p>
     <details>
      <summary>Comments</summary>
-      <p>${scout.extraComments}</p>
+      <p style= "width: 300px; overflow-wrap: break-word;">${scout.extraComments}</p>
     </details>
 </details>
 <button class="deleteBtn" data-id="${doc.id}">Delete</button>`
@@ -54,7 +55,8 @@ if (!BS) {
 //Imports values in a template and put it in box with id=teamInfo
 document.getElementById('teamBasics').innerHTML = `
 <div>
-  <h2>${BS.name} (Team ${BS.number}) (Location ${BS.location.country})</h2> 
+  <h2>${BS.name} (Team ${BS.number})</h2> 
+  <h2>(Location ${BS.location.country})</h2> 
 </div>`;
 
 
@@ -73,6 +75,7 @@ document.getElementById('teamInfo').innerHTML = `
   <p>TeleOp OPR: ${Math.round(QS.dc.value)} (Rank ${QS.dc.rank})</p> 
   <p>Endgame OPR: ${Math.round(QS.eg.value)} (Rank ${QS.eg.rank})</p>
 </div>`;
+
 
 
 
@@ -104,7 +107,7 @@ wait.forEach((doc) => {
     <p>Endgame: ${scout.endgamePosition}</p>
     <details>
      <summary>Comments</summary>
-      <p>${scout.extraComments}</p>
+      <p style= "width: 300px; overflow-wrap: break-word;">${scout.extraComments}</p>
     </details>
 </details> 
 <button class="deleteBtn" data-id="${doc.id}">Delete</button>`
@@ -130,7 +133,8 @@ if (!BS) {
 //Imports values in a template and put it in box with id=teamInfo
 document.getElementById('teamBasics2').innerHTML = `
 <div>
-  <h2>${BS.name} (Team ${BS.number}) (Location ${BS.location.country})</h2> 
+  <h2>${BS.name} (Team ${BS.number})</h2> 
+  <h2>(Location ${BS.location.country})</h2> 
 </div>`;
 
 
@@ -152,6 +156,7 @@ document.getElementById('teamInfo2').innerHTML = `
 
 }); 
 </script>
+
 
 <style>
 .center {
@@ -186,19 +191,20 @@ document.getElementById('teamInfo2').innerHTML = `
 <div style="display: flex; gap: 20px;" class="center">
 
   <div>
+    <input type="number" id="teamNumberInput" placeholder="Enter team number">
+    <button id="lookupBtn">Look Up Team</button>
     <div id="teamBasics"></div>
     <div id="teamInfo"></div>
     <div id="scouting"></div>
-    <input type="number" id="teamNumberInput" placeholder="Enter team number">
-    <button id="lookupBtn">Look Up Team</button>
   </div>
 
   <div>
+    <input type="number" id="teamNumberInput2" placeholder="Enter team number">
+    <button id="lookupBtn2">Look Up Team</button>
     <div id="teamBasics2"></div>
     <div id="teamInfo2"></div>
     <div id="scouting2"></div>
-    <input type="number" id="teamNumberInput2" placeholder="Enter team number">
-    <button id="lookupBtn2">Look Up Team</button>
+
   </div>
 
 </div>
