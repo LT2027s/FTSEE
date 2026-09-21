@@ -221,18 +221,19 @@ document.getElementById('teamInfo2').innerHTML = `
 
 <div style="width: 300px; height: 300px;">
   <canvas id="ftseechart"></canvas>
+  <button id="graphit">Graph Data</button>
 </div>
 
 <script>
-  const labels = ['32200', '24090'];
+  document.getElementById('graphit').addEventListener('click', async () => { 
+  const labels = ['teamNumberInput'.value, 'teamNumberInput2'.value];
   const rank = [1, 2];
-
   const data = {
     labels: labels,
     datasets: [{
       label: 'Rank',
       data: rank,
-      backgroundColor: 'rgb(66, 147, 245)'
+      backgroundColor: 'rgb(255, 152, 48)'
     }]
   };
 
@@ -249,4 +250,5 @@ document.getElementById('teamInfo2').innerHTML = `
     document.getElementById('ftseechart'),
     config
   );
+})
 </script>
