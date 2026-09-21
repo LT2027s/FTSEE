@@ -1,42 +1,48 @@
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.1/chart.min.js" integrity="sha512-mOiNIzRB+4/INX75lwv3+eSG+Sih4wQy+qS/+0mHkk2MjHZW6ABGN6eQD1MoV5Tv9KG+G3UAMy1vW3fk5goVXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script type="module">
   import { getTeamStats } from './ftcscout.js';
   import { getTeamBasics } from './ftcscout.js';
   import { db, collection, query, where, getDocs, doc, deleteDoc } from './firebase.js';
 
-  
 
   //Waits until button gets clicked then 
 document.getElementById('lookupBtn').addEventListener('click', async () => { 
+  
   //Records inputed team number
   const number = document.getElementById('teamNumberInput').value; 
 
 const QS = await getTeamStats(Number(number), 2025); //Checks teams current seasons rankings
 const BS = await getTeamBasics(Number(number)); //Team name and location
+
+
 const fireQ = query(collection(db, "scoutingEntries"), where("teamNumber", "==", number));
 const wait = await getDocs(fireQ);
-let amount = 1
-let html = "";
-wait.forEach((doc) => {
-  const scout = doc.data();
-  html += `
-<details>
- <summary> <b>Scouting form: ${amount}</b> </summary>
-    <p>${scout.teamName}</p>
-    <p>Auto: ${scout.autoType}</p>
-    <p>TeleOp: ${scout.teleOpPosition}</p>
-    <p>Endgame: ${scout.endgamePosition}</p>
+
+  let amount = 1
+  let html = "";
+  
+  wait.forEach((doc) => {
+    const scout = doc.data();
+    html += `
     <details>
-     <summary>Comments</summary>
-      <p style= "width: 300px; overflow-wrap: break-word;">${scout.extraComments}</p>
+    <summary> <b>Scouting form: ${amount}</b> </summary>
+      <p>${scout.teamName}</p>
+      <p>Auto: ${scout.autoType}</p>
+      <p>TeleOp: ${scout.teleOpPosition}</p>
+      <p>Endgame: ${scout.endgamePosition}</p>
+        <details>
+        <summary>Comments</summary>
+          <p style= "width: 300px; overflow-wrap: break-word;">${scout.extraComments}</p>
+        </details>
     </details>
-</details>
-<button class="deleteBtn" data-id="${doc.id}">Delete</button>`
-;  
+    <button class="deleteBtn" data-id="${doc.id}">Delete</button>`;  
   amount+=1;
 });
-document.getElementById('scouting').innerHTML = html || "<p>No scouting entries yet.</p>";
-document.querySelectorAll('.deleteBtn').forEach((btn) => {
+
+//returns html or the <p>      <p> will be returned if html is false ("")
+document.getElementById('scouting').innerHTML = html || "<p>No scouting entries yet.</p>"; 
+
+//Delete Button
+document.querySelectorAll('.deleteBtn').forEach((btn) => {  
   btn.addEventListener('click', async () => {
     await deleteDoc(doc(db, "scoutingEntries", btn.dataset.id)); //waits for code to be deleted on the database
     btn.closest('b, p, button')?.remove(); // deletes the delete button
@@ -94,24 +100,24 @@ const BS = await getTeamBasics(Number(number)); //Team name and location
 
 const fireQ = query(collection(db, "scoutingEntries"), where("teamNumber", "==", number));
 const wait = await getDocs(fireQ);
-let amount = 1
-let html = "";
-wait.forEach((doc) => {
-  const scout = doc.data();
-  html += `
-<details>
- <summary> <b>Scouting form: ${amount}</b> </summary> 
-    <p>${scout.teamName}</p>
-    <p>Auto: ${scout.autoType}</p>
-    <p>TeleOp: ${scout.teleOpPosition}</p>
-    <p>Endgame: ${scout.endgamePosition}</p>
+  
+  let amount = 1
+  let html = "";
+    wait.forEach((doc) => {
+    const scout = doc.data();
+    html += `
     <details>
-     <summary>Comments</summary>
-      <p style= "width: 300px; overflow-wrap: break-word;">${scout.extraComments}</p>
+    <summary> <b>Scouting form: ${amount}</b> </summary>
+      <p>${scout.teamName}</p>
+      <p>Auto: ${scout.autoType}</p>
+      <p>TeleOp: ${scout.teleOpPosition}</p>
+      <p>Endgame: ${scout.endgamePosition}</p>
+        <details>
+        <summary>Comments</summary>
+          <p style= "width: 300px; overflow-wrap: break-word;">${scout.extraComments}</p>
+        </details>
     </details>
-</details> 
-<button class="deleteBtn" data-id="${doc.id}">Delete</button>`
-;  
+    <button class="deleteBtn" data-id="${doc.id}">Delete</button>`;  
   amount+=1;
 });
 document.getElementById('scouting2').innerHTML = html || "<p>No scouting entries yet.</p>";
@@ -208,3 +214,39 @@ document.getElementById('teamInfo2').innerHTML = `
   </div>
 
 </div>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+
+<div style="width: 300px; height: 300px;">
+  <canvas id="ftseechart"></canvas>
+</div>
+
+<script>
+  const labels = ['32200', '24090'];
+  const rank = [1, 2];
+
+  const data = {
+    labels: labels,
+    datasets: [{
+      label: 'Rank',
+      data: rank,
+      backgroundColor: 'rgb(66, 147, 245)'
+    }]
+  };
+
+  const config = {
+    type: 'bar',
+    data: data,
+    options: {
+      responsive: true,
+      maintainAspectRatio: false
+    }
+  };
+
+  const chart = new Chart(
+    document.getElementById('ftseechart'),
+    config
+  );
+</script>
