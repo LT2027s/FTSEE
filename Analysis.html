@@ -3,7 +3,7 @@
   import { getTeamBasics } from './ftcscout.js';
   import { db, collection, query, where, getDocs, doc, deleteDoc } from './firebase.js';
 
-//Button 1 logic. Search up scouting data and FTC scout data
+//Button 1 logic (Search up scouting data and FTC scout data)
 document.getElementById('lookupBtn').addEventListener('click', async () => { 
   
   //Records inputed team number
@@ -86,7 +86,7 @@ document.getElementById('teamInfo').innerHTML = `
 
 }); 
 
-//Button 2 logic. Search up scouting data and FTC scout data
+//Button 2 logic (Search up scouting data and FTC scout data)
 document.getElementById('lookupBtn2').addEventListener('click', async () => { 
   //Records inputed team number
   const number = document.getElementById('teamNumberInput2').value; 
@@ -199,7 +199,51 @@ document.getElementById('teamInfo2').innerHTML = `
     config
   );
 })
+
+//Download All Scouted Data button and logic
+document.getElementById('downloadAllBtn').addEventListener('click', async () => {
+ 
+  const snapshot = await getDocs(collection(db, "scoutingEntries")); //grabs every scouting entry in the database
+ 
+  //Column headers for the CSV
+  const headers = ["Team Number","Team Name","Auto Type","Avg Auto Balls","TeleOp Position","Avg TeleOp Balls","Endgame Position","Extra Comments"];
+  const rows = [headers];
+ 
+  snapshot.forEach((doc) => {
+    const scout = doc.data();
+    rows.push([
+      scout.teamNumber,
+      scout.teamName,
+      scout.autoType,
+      scout.autoBalls,
+      scout.teleOpPosition,
+      scout.teleopBalls,
+      scout.endgamePosition,
+      scout.extraComments
+    ]);
+  });
+ 
+ 
+  function csvEscape(value) {
+    //If the value is blank return blank
+    if (value === undefined || value === null) return "";
+     //Wraps a value in quotes and escapes (/) any quotes inside it, so commas or newlines in comments don't break the CSV
+    return `"${String(value).replace(/"/g, '""')}"`;
+  }
+ 
+  const csvContent = rows.map(row => row.map(csvEscape).join(",")).join("\n");
+ 
+  //Builds a downloadable file in the browser and clicks it automatically
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "scouting_data.csv";
+  link.click();
+  URL.revokeObjectURL(url);
+});
 </script>
+
 <!--Center Class-->
 <style>
 .center {
@@ -232,6 +276,11 @@ document.getElementById('teamInfo2').innerHTML = `
         </nav>
     </header>
 </body>
+
+<!--Download data button-->
+<div style="display: flex; gap: 20px;" class="center">
+<button id= downloadAllBtn> Download all scouting form data </button>
+</div>
 
 <!--Scouting reports and data-->
 <div style="display: flex; gap: 20px;" class="center">
