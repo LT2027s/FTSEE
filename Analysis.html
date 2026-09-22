@@ -3,8 +3,7 @@
   import { getTeamBasics } from './ftcscout.js';
   import { db, collection, query, where, getDocs, doc, deleteDoc } from './firebase.js';
 
-
-  //Waits until button gets clicked then 
+//Button 1 logic. Search up scouting data and FTC scout data
 document.getElementById('lookupBtn').addEventListener('click', async () => { 
   
   //Records inputed team number
@@ -41,7 +40,7 @@ const wait = await getDocs(fireQ);
 //returns html or the <p>      <p> will be returned if html is false ("")
 document.getElementById('scouting').innerHTML = html || "<p>No scouting entries yet.</p>"; 
 
-//Delete Button
+//Delete Button 
 document.querySelectorAll('.deleteBtn').forEach((btn) => {  
   btn.addEventListener('click', async () => {
     await deleteDoc(doc(db, "scoutingEntries", btn.dataset.id)); //waits for code to be deleted on the database
@@ -87,9 +86,7 @@ document.getElementById('teamInfo').innerHTML = `
 
 }); 
 
-
-
-  //Waits until button2 gets clicked then 
+//Button 2 logic. Search up scouting data and FTC scout data
 document.getElementById('lookupBtn2').addEventListener('click', async () => { 
   //Records inputed team number
   const number = document.getElementById('teamNumberInput2').value; 
@@ -121,6 +118,8 @@ const wait = await getDocs(fireQ);
   amount+=1;
 });
 document.getElementById('scouting2').innerHTML = html || "<p>No scouting entries yet.</p>";
+
+//Scout Delete Button
 document.querySelectorAll('.deleteBtn').forEach((btn) => {
   btn.addEventListener('click', async () => {
     await deleteDoc(doc(db, "scoutingEntries", btn.dataset.id));
@@ -128,13 +127,13 @@ document.querySelectorAll('.deleteBtn').forEach((btn) => {
     document.getElementById('lookupBtn2').click(); // runs look up btn
   });
 });
+
 //Fail safe if team doesnt exist
 if (!BS) {
   document.getElementById('teamBasics2').innerHTML = `<p>This team doesnt exist.</p>`;
   document.getElementById('teamInfo2').innerHTML = ``;
   return;
 }
-
 
 //Imports values in a template and put it in box with id=teamInfo
 document.getElementById('teamBasics2').innerHTML = `
@@ -162,7 +161,8 @@ document.getElementById('teamInfo2').innerHTML = `
 
 }); 
  
-
+  
+  //Graph Button and Logic
   let ftcseechart = null;
   document.getElementById('graphit').addEventListener('click', async () => { 
     const number1 = document.getElementById('teamNumberInput').value;
@@ -200,8 +200,7 @@ document.getElementById('teamInfo2').innerHTML = `
   );
 })
 </script>
-
-
+<!--Center Class-->
 <style>
 .center {
   display: flex;
@@ -210,6 +209,7 @@ document.getElementById('teamInfo2').innerHTML = `
 }
 </style>
 
+<!--Auto adjust screen etc-->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -217,6 +217,7 @@ document.getElementById('teamInfo2').innerHTML = `
     <link rel="stylesheet" href="style.css">
 </head>
 
+<!-- Searchbars and such horizontally -->
 <body>
     <header>
         <nav>
@@ -231,7 +232,8 @@ document.getElementById('teamInfo2').innerHTML = `
         </nav>
     </header>
 </body>
-<!-- Searchbars and such horizontally -->
+
+<!--Scouting reports and data-->
 <div style="display: flex; gap: 20px;" class="center">
 
   <div>
@@ -253,11 +255,9 @@ document.getElementById('teamInfo2').innerHTML = `
 
 </div>
 
-
-
+<!--Graph-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-
-<div style="width: 300px; height: 300px;" class="center">
+<div class="center" style="width: 300px; height: 300px;" >
   <canvas id="ftseechart"></canvas>
   <button id="graphit">Graph Data</button>
 </div>
