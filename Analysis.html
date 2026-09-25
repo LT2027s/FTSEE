@@ -17,11 +17,11 @@ const fireQ = query(collection(db, "scoutingEntries"), where("teamNumber", "==",
 const wait = await getDocs(fireQ);
 
   let amount = 1
-  let html = "";
+  let form = "";
   
   wait.forEach((doc) => {
     const scout = doc.data();
-    html += `
+    form += `
     <details>
     <summary> <b>Scouting form: ${amount}</b> </summary>
       <p>${scout.teamName}</p>
@@ -38,7 +38,7 @@ const wait = await getDocs(fireQ);
 });
 
 //returns html or the <p>      <p> will be returned if html is false ("")
-document.getElementById('scouting').innerHTML = html || "<p>No scouting entries yet.</p>"; 
+document.getElementById('scouting').innerHTML = form || "<p>No scouting entries yet.</p>"; 
 
 //Delete Button 
 document.querySelectorAll('.deleteBtn').forEach((btn) => {  
@@ -99,10 +99,10 @@ const fireQ = query(collection(db, "scoutingEntries"), where("teamNumber", "==",
 const wait = await getDocs(fireQ);
   
   let amount = 1
-  let html = "";
+  let form = "";
     wait.forEach((doc) => {
     const scout = doc.data();
-    html += `
+    form += `
     <details>
     <summary> <b>Scouting form: ${amount}</b> </summary>
       <p>${scout.teamName}</p>
@@ -117,12 +117,12 @@ const wait = await getDocs(fireQ);
     <button class="deleteBtn" data-id="${doc.id}">Delete</button>`;  
   amount+=1;
 });
-document.getElementById('scouting2').innerHTML = html || "<p>No scouting entries yet.</p>";
+document.getElementById('scouting2').innerHTML = form || "<p>No scouting entries yet.</p>";
 
 //Scout Delete Button
 document.querySelectorAll('.deleteBtn').forEach((btn) => {
   btn.addEventListener('click', async () => {
-    await deleteDoc(doc(db, "scoutingEntries", btn.dataset.id));
+    await deleteDoc(doc(db, "scoutingEntries", btn.dataset.id));//waits for data with the data id to be deleted from the database
     btn.closest('b, p, button')?.remove(); // makes the button dissapear on click
     document.getElementById('lookupBtn2').click(); // runs look up btn
   });
