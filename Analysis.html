@@ -2,165 +2,93 @@
   import { getTeamStats } from './ftcscout.js';
   import { getTeamBasics } from './ftcscout.js';
   import { db, collection, query, where, getDocs, doc, deleteDoc } from './firebase.js';
+//Look up and Display function
+async function lookUpAndDisplay(inputId, basicId, infoId, scoutingId, buttonId){
+  //Records inputed team number
+  const number = document.getElementById(inputId).value; 
 
-//Button 1 logic (Search up scouting data and FTC scout data)
+  const QS = await getTeamStats(Number(number), 2025); //Checks teams current seasons rankings
+  const BS = await getTeamBasics(Number(number)); //Team name and location
+
+
+  const fireQ = query(collection(db, "scoutingEntries"), where("teamNumber", "==", number));
+  const querySnapshot = await getDocs(fireQ);
+
+  let amount = 0
+  let form = "";
+  
+  querySnapshot.forEach((docSnap) => {
+    const scout = docSnap.data();
+    amount+=1;
+    form += `
+    <details>
+    <summary> <b>Scouting form: ${amount}</b> </summary>
+      <p>${scout.teamName}</p>
+      <p>Auto: ${scout.autoType}</p>
+      <p>TeleOp: ${scout.teleOpPosition}</p>
+      <p>Endgame: ${scout.endgamePosition}</p>
+        <details>
+        <summary>Comments</summary>
+          <p style= "width: 300px; overflow-wrap: break-word;">${scout.extraComments}</p>
+        </details>
+    </details>
+    <button class="deleteBtn" data-id="${docSnap.id}">Delete</button>`;  
+  
+  });
+
+  //returns html or the <p>...<p> will be returned if html is false ("")
+  document.getElementById(scoutingId).innerHTML = form || "<p>No scouting entries yet.</p>"; 
+
+  //Delete Button 
+  document.querySelectorAll(`#${scoutingId} .deleteBtn`).forEach((btn) => {  
+    btn.addEventListener('click', async () => {
+      await deleteDoc(doc(db, "scoutingEntries", btn.dataset.id)); //waits for code to be deleted on the database
+      document.getElementById(buttonId).click(); // Runs look up button (essentially reloading)
+    });
+  });
+
+  //Fail safe if team doesnt exist (stats also dont exist)
+  if (!BS) {
+  document.getElementById(basicId).innerHTML = `<p>This team doesnt exist.</p>`;
+  document.getElementById(infoId).innerHTML = ``;
+  return;
+  }
+
+
+  //Imports values in a template and put it in box with the respective basic id
+  document.getElementById(basicId).innerHTML = `
+  <div>
+  <h2>${BS.name} (Team ${BS.number})</h2> 
+  <h2>(Location ${BS.location.country})</h2> 
+  </div>`;
+
+
+  //Fail safe if team didnt participate this season (the order lets the team basics to still be there)
+  if (!QS) {
+  document.getElementById(infoId).innerHTML = `<p>No stats found for this team/season.</p>`;
+  return;
+  }
+
+
+  //Imports values in a template and put it in box with respective info id
+  document.getElementById(infoId).innerHTML = `
+  <div>
+  <p>Total OPR: ${Math.round(QS.tot.value)} (Rank ${QS.tot.rank})</p> 
+  <p>Auto OPR: ${Math.round(QS.auto.value)} (Rank ${QS.auto.rank})</p> 
+  <p>TeleOp OPR: ${Math.round(QS.dc.value)} (Rank ${QS.dc.rank})</p> 
+  <p>Endgame OPR: ${Math.round(QS.eg.value)} (Rank ${QS.eg.rank})</p>
+  </div>`;
+} 
+
+//Button 1 
 document.getElementById('lookupBtn').addEventListener('click', async () => { 
-  
-  //Records inputed team number
-  const number = document.getElementById('teamNumberInput').value; 
-
-const QS = await getTeamStats(Number(number), 2025); //Checks teams current seasons rankings
-const BS = await getTeamBasics(Number(number)); //Team name and location
-
-
-const fireQ = query(collection(db, "scoutingEntries"), where("teamNumber", "==", number));
-const wait = await getDocs(fireQ);
-
-  let amount = 1
-  let form = "";
-  
-  wait.forEach((doc) => {
-    const scout = doc.data();
-    form += `
-    <details>
-    <summary> <b>Scouting form: ${amount}</b> </summary>
-      <p>${scout.teamName}</p>
-      <p>Auto: ${scout.autoType}</p>
-      <p>TeleOp: ${scout.teleOpPosition}</p>
-      <p>Endgame: ${scout.endgamePosition}</p>
-        <details>
-        <summary>Comments</summary>
-          <p style= "width: 300px; overflow-wrap: break-word;">${scout.extraComments}</p>
-        </details>
-    </details>
-    <button class="deleteBtn" data-id="${doc.id}">Delete</button>`;  
-  amount+=1;
+  lookUpAndDisplay('teamNumberInput','teamBasics', 'teamInfo', 'scouting', 'lookupBtn');
 });
-
-//returns html or the <p>      <p> will be returned if html is false ("")
-document.getElementById('scouting').innerHTML = form || "<p>No scouting entries yet.</p>"; 
-
-//Delete Button 
-document.querySelectorAll('.deleteBtn').forEach((btn) => {  
-  btn.addEventListener('click', async () => {
-    await deleteDoc(doc(db, "scoutingEntries", btn.dataset.id)); //waits for code to be deleted on the database
-    btn.closest('b, p, button')?.remove(); // deletes the delete button
-    document.getElementById('lookupBtn').click(); // Runs look up button (essentially reloading)
-  });
-});
-
-//Fail safe if team doesnt exist (stats also dont exist)
-if (!BS) {
-  document.getElementById('teamBasics').innerHTML = `<p>This team doesnt exist.</p>`;
-  document.getElementById('teamInfo').innerHTML = ``;
-  return;
-}
-
-
-//Imports values in a template and put it in box with id=teamInfo
-document.getElementById('teamBasics').innerHTML = `
-<div>
-  <h2>${BS.name} (Team ${BS.number})</h2> 
-  <h2>(Location ${BS.location.country})</h2> 
-</div>`;
-
-
-//Fail safe if team didnt participate this season (the order lets the team basics to still be there)
-if (!QS) {
-  document.getElementById('teamInfo').innerHTML = `<p>No stats found for this team/season.</p>`;
-  return;
-}
-
-
-//Imports values in a template and put it in box with id=teamInfo
-document.getElementById('teamInfo').innerHTML = `
-<div>
-  <p>Total OPR: ${Math.round(QS.tot.value)} (Rank ${QS.tot.rank})</p> 
-  <p>Auto OPR: ${Math.round(QS.auto.value)} (Rank ${QS.auto.rank})</p> 
-  <p>TeleOp OPR: ${Math.round(QS.dc.value)} (Rank ${QS.dc.rank})</p> 
-  <p>Endgame OPR: ${Math.round(QS.eg.value)} (Rank ${QS.eg.rank})</p>
-</div>`;
-
-
-
-
-}); 
-
-//Button 2 logic (Search up scouting data and FTC scout data)
+//Button 2 
 document.getElementById('lookupBtn2').addEventListener('click', async () => { 
-  //Records inputed team number
-  const number = document.getElementById('teamNumberInput2').value; 
-
-const QS = await getTeamStats(Number(number), 2025); //Checks teams current seasons rankings
-const BS = await getTeamBasics(Number(number)); //Team name and location
-
-
-const fireQ = query(collection(db, "scoutingEntries"), where("teamNumber", "==", number));
-const wait = await getDocs(fireQ);
+  lookUpAndDisplay('teamNumberInput2','teamBasics2', 'teamInfo2', 'scouting2','lookupBtn2');
+});
   
-  let amount = 1
-  let form = "";
-    wait.forEach((doc) => {
-    const scout = doc.data();
-    form += `
-    <details>
-    <summary> <b>Scouting form: ${amount}</b> </summary>
-      <p>${scout.teamName}</p>
-      <p>Auto: ${scout.autoType}</p>
-      <p>TeleOp: ${scout.teleOpPosition}</p>
-      <p>Endgame: ${scout.endgamePosition}</p>
-        <details>
-        <summary>Comments</summary>
-          <p style= "width: 300px; overflow-wrap: break-word;">${scout.extraComments}</p>
-        </details>
-    </details>
-    <button class="deleteBtn" data-id="${doc.id}">Delete</button>`;  
-  amount+=1;
-});
-document.getElementById('scouting2').innerHTML = form || "<p>No scouting entries yet.</p>";
-
-//Scout Delete Button
-document.querySelectorAll('.deleteBtn').forEach((btn) => {
-  btn.addEventListener('click', async () => {
-    await deleteDoc(doc(db, "scoutingEntries", btn.dataset.id));//waits for data with the data id to be deleted from the database
-    btn.closest('b, p, button')?.remove(); // makes the button dissapear on click
-    document.getElementById('lookupBtn2').click(); // runs look up btn
-  });
-});
-
-//Fail safe if team doesnt exist
-if (!BS) {
-  document.getElementById('teamBasics2').innerHTML = `<p>This team doesnt exist.</p>`;
-  document.getElementById('teamInfo2').innerHTML = ``;
-  return;
-}
-
-//Imports values in a template and put it in box with id=teamInfo
-document.getElementById('teamBasics2').innerHTML = `
-<div>
-  <h2>${BS.name} (Team ${BS.number})</h2> 
-  <h2>(Location ${BS.location.country})</h2> 
-</div>`;
-
-
-//Fail safe if team didnt participate this season
-if (!QS) {
-  document.getElementById('teamInfo2').innerHTML = `<p>No stats found for this team/season.</p>`;
-  return;
-}
-
-
-//Imports values in a template and put it in box with id=teamInfo
-document.getElementById('teamInfo2').innerHTML = `
-<div>
-  <p>Total OPR: ${Math.round(QS.tot.value)} (Rank ${QS.tot.rank})</p> 
-  <p>Auto OPR: ${Math.round(QS.auto.value)} (Rank ${QS.auto.rank})</p> 
-  <p>TeleOp OPR: ${Math.round(QS.dc.value)} (Rank ${QS.dc.rank})</p> 
-  <p>Endgame OPR: ${Math.round(QS.eg.value)} (Rank ${QS.eg.rank})</p>
-</div>`;
-
-}); 
- 
   
   //Graph Button and Logic
   let ftcseechart = null;
@@ -175,7 +103,7 @@ document.getElementById('teamInfo2').innerHTML = `
   const data = {
     labels: labels,
     datasets: [{
-      label: 'Rank',
+      label: 'OPR Rank',
       data: rank,
       backgroundColor: 'rgb(255, 152, 48)'
     }]
@@ -253,7 +181,7 @@ document.getElementById('downloadAllBtn').addEventListener('click', async () => 
 }
 </style>
 
-<!--Auto adjust screen etc-->
+<!--Screen Settings-->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -261,7 +189,7 @@ document.getElementById('downloadAllBtn').addEventListener('click', async () => 
     <link rel="stylesheet" href="style.css">
 </head>
 
-<!-- Searchbars and such horizontally -->
+<!-- Navbar horizontally -->
 <body>
     <header>
         <nav>
